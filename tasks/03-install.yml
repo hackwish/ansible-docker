@@ -2,3 +2,4 @@
   apt:
       name={{ docker_package }}
       update_cache=yes
+  register: docker_installed
