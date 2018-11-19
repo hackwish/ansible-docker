@@ -1,0 +1,17 @@
+---
+# tasks file for docker
+
+- include: 01-dependencies.yml
+  tags: docker-dependencies
+
+- include: 02-repo.yml
+  tags: docker-repo
+
+- include: 03-install.yml
+  tags: docker-install
+
+- include: 04-install_compose.yml
+  tags: docker-compose-install
+
+- include: 05-create_group.yml
+  tags: docker_create_group-dependencies

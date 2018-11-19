@@ -1,0 +1,29 @@
+- name: Create a docker group
+  group:
+      name=docker
+      state=present
+
+- name: Add user(s) to docker group
+  user:
+      name={{ item }}
+      group=docker
+      state=present
+  with_items: 
+      - docker_users
+      - deployer
+  when: docker_users is defined
+
+# - name: add our login user to docker group
+#   user: name={{ansible_user}} groups=docker append=yes
+
+- name: make sure docker is running
+  service: name=docker state=started enabled=true
+
+- name: Configure Docker
+  template:
+      src=default_docker.j2
+      dest=/etc/default/docker
+      mode=0644
+      owner=root
+      group=root
+  notify: restart docker

@@ -1,0 +1,17 @@
+---
+# defaults file for docker
+# Edition can be one of: 'ce' (Community Edition) or 'ee' (Enterprise Edition).
+docker_edition: 'ce'
+docker_package: "docker-{{ docker_edition }}"
+docker_version: '{{ DOCKER_PKG_VERSION }}'
+docker_package_state: present
+
+# Service options.
+docker_service_state: started
+docker_service_enabled: true
+docker_restart_handler_state: restarted
+
+# Docker Compose options.
+docker_install_compose: true
+docker_compose_version: "1.23.1"
+docker_compose_path: /usr/local/bin/docker-compose
