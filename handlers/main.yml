@@ -2,3 +2,6 @@
 # handlers file for docker
 - name: restart docker
   service: "name=docker state={{ docker_restart_handler_state }}"
+
+- name: stop docker
+  service: "name=docker state={{ docker_stop_handler_state }}"

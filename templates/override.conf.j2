@@ -1,0 +1,3 @@
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// -H unix:// -H tcp://0.0.0.0:2375 --ip-forward=true --iptables=true --ip-masq=true --label storage=ssd --label stage=production

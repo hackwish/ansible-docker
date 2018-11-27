@@ -26,4 +26,22 @@
       mode=0644
       owner=root
       group=root
+  notify: stop docker
+
+- name: Override Docker config
+  template:
+      src=override.conf.j2
+      dest=/etc/systemd/system/docker.service.d/override.conf
+      mode=0644
+      owner=root
+      group=root
+  notify: stop docker
+
+- name: Configure Docker Images Path
+  template:
+      src=daemon.json.j2
+      dest=/etc/docker/daemon.json
+      mode=0644
+      owner=root
+      group=root
   notify: restart docker
