@@ -1,10 +1,11 @@
-- name: Add docker apt repo
-  apt_repository:
-      repo='deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable edge'
-      state=present
-
 - name: Import the Docker repository GPG key
   apt_key:
       url=https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
       state=present
       id=0EBFCD88
+  delay: 10
+
+- name: Add docker apt repo
+  apt_repository:
+      repo='deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable edge'
+      state=present
