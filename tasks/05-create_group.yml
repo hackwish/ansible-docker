@@ -1,3 +1,4 @@
+---
 - name: Create a docker group
   group:
       name=docker
@@ -12,12 +13,6 @@
       - docker_users
       - deployer
   when: docker_users is defined
-  # notify: 
-  #   - reload systemd
-  #   - restart docker
-
-# - name: add our login user to docker group
-#   user: name={{ansible_user}} groups=docker append=yes
 
 - name: make sure docker is running
   service: name=docker state=started enabled=true
@@ -26,6 +21,7 @@
   file: path={{ item.path }} state=directory mode="a+rw"
   with_items:
       - { path: '/etc/systemd/system/docker.service.d' }
+      - { path: '/etc/docker/' }
 
 - name: Configure Docker
   template:
