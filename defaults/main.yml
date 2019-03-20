@@ -1,9 +1,12 @@
 ---
 # defaults file for docker
 # Edition can be one of: 'ce' (Community Edition) or 'ee' (Enterprise Edition).
+path_to_ssh_pub_key: "{{ lookup('env','HOME') }}/.ssh/id_rsa.pub"
+
 docker_edition: 'ce'
-docker_package: "docker-{{ docker_edition }}"
 docker_version: '{{ DOCKER_PKG_VERSION }}'
+docker_num_version: "18.06.2"
+docker_package: "docker-{{ docker_edition }}"
 docker_package_state: present
 
 # Service options.
@@ -13,5 +16,5 @@ docker_restart_handler_state: restarted
 
 # Docker Compose options.
 docker_install_compose: true
-docker_compose_version: "1.23.1"
+docker_compose_version: "1.23.2"
 docker_compose_path: /usr/local/bin/docker-compose

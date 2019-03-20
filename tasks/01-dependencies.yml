@@ -4,6 +4,8 @@
     name: "{{ packages }}"
   vars:
     packages:
+      - python 
+      - python-simplejson
       - python-dev
       - python-setuptools
       - python-pip
@@ -11,6 +13,8 @@
       - ca-certificates
       - curl
       - software-properties-common
+      - gnupg2
+      - bridge-utils
     update_cache: yes
 
 ##NO NECESARIA PARA UBUNTU 18.XX +

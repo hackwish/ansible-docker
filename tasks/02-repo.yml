@@ -8,5 +8,5 @@
 
 - name: Add docker apt repo
   apt_repository:
-      repo='deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable edge'
+      repo='deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable'
       state=present
