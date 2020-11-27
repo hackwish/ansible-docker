@@ -1,6 +1,9 @@
 ---
 # tasks file for docker
 
+- include: 00-ensure-authorized-keys.yml
+  tags: docker-ensure-authorized-keys
+
 - include: 01-dependencies.yml
   tags: docker-dependencies
 

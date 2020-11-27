@@ -6,8 +6,6 @@
       - docker-ce-cli
       - containerd.io
     state: latest
-
-register: docker_installed
-tags: docker
-delay: 10
-ignore_errors: true
+  register: docker_installed
+  tags: docker
+  delay: 10
