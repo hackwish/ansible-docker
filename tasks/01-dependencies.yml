@@ -1,22 +1,21 @@
+---
 - name: Install Docker dependencies
   apt: 
     name: "{{ packages }}"
   vars:
     packages:
-      - python-dev
-      - python-setuptools
       - apt-transport-https
       - ca-certificates
       - curl
+      - gnupg-agent
       - software-properties-common
     update_cache: yes
-
-# - name: Install pip
-#   easy_install:
-#       name=pip
-#       state=latest
-
-- name: Install docker-py
+    
+- name: Install Python packages.
   pip:
-      name=docker-py
-      state=latest
+    name: "{{ packages }}"
+    executable: pip3
+  vars:
+    packages:
+      - docker-py
+    state: present

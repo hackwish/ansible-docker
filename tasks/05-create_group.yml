@@ -1,3 +1,4 @@
+---
 - name: Create a docker group
   group:
       name=docker
@@ -13,11 +14,14 @@
       - deployer
   when: docker_users is defined
 
-# - name: add our login user to docker group
-#   user: name={{ansible_user}} groups=docker append=yes
-
 - name: make sure docker is running
   service: name=docker state=started enabled=true
+
+- name: Create docker custom config directory
+  file: path={{ item.path }} state=directory mode="a+rw"
+  with_items:
+      - { path: '/etc/systemd/system/docker.service.d' }
+      - { path: '/etc/docker/' }
 
 - name: Configure Docker
   template:
@@ -26,4 +30,24 @@
       mode=0644
       owner=root
       group=root
-  notify: restart docker
+#  notify: stop docker
+
+- name: Override Docker config
+  template:
+      src=override.conf.j2
+      dest=/etc/systemd/system/docker.service.d/override.conf
+      mode=0644
+      owner=root
+      group=root
+#  notify: stop docker
+
+- name: Configure Docker Images Path
+  template:
+      src=daemon.json.j2
+      dest=/etc/docker/daemon.json
+      mode=0644
+      owner=root
+      group=root
+  notify: 
+    - reload systemd
+    - restart docker

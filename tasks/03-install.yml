@@ -1,5 +1,13 @@
+---
 - name: Install Docker package
-  apt:
-      name={{ docker_package }}
-      update_cache=yes
-  register: docker_installed
+  package:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+
+register: docker_installed
+tags: docker
+delay: 10
+ignore_errors: true
