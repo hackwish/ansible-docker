@@ -16,5 +16,8 @@
 - include: 04-install_compose.yml
   tags: docker-compose-install
 
+- include: 05-users.yml
+  tags: docker-users
+
 # - include: 05-create_group.yml
 #   tags: docker_create_group-dependencies
