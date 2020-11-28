@@ -1,3 +1,8 @@
 ---
 - name: Fix Docker execution without sudo #Issue #7
-  shell: "users=$( getent passwd {1000..1010} | awk -F: '$3 {print $1}' );for user in $users; do sudo usermod -a -G docker $user; done"
+  shell: "users=$( getent passwd | awk -F: '$3 > 999 {print $1}' );for user in $users; do sudo usermod -a -G docker $user; done"
+  register: users
+
+- debug:
+    var: users
+    verbosity: 2
