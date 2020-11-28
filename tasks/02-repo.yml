@@ -5,7 +5,7 @@
       state: present
       id: 0EBFCD88
   delay: 10
-  when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu
+  when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
 
 - name: Add docker apt repo (amd64)
   apt_repository:
