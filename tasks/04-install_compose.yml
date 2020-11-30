@@ -28,6 +28,7 @@
     executable: pip3
   vars:
     packages:
+      - docker
       - docker-compose
     state: present
   when:

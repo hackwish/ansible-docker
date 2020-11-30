@@ -13,11 +13,11 @@
       - bridge-utils
     update_cache: yes
     
-- name: Install Python packages.
-  pip:
-    name: "{{ packages }}"
-    executable: pip3
-  vars:
-    packages:
-      - docker-py
-    state: present
+# - name: Install Python packages.
+#   pip:
+#     name: "{{ packages }}"
+#     executable: pip3
+#   vars:
+#     packages:
+#       - docker-py
+#     state: present
