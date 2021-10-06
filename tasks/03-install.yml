@@ -1,11 +1,34 @@
 ---
-- name: Install Docker package
-  package:
-    name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
+- name: Update all packages to their latest version (Ubuntu based)
+  apt:
+    name: "*"
     state: latest
-  register: docker_installed
-  tags: docker
-  delay: 10
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install Docker
+  package: 
+    name:
+      - docker
+      - docker-compose
+      - python3-docker
+      - python3-requests
+    state: present
+    update_cache: yes
+
+- name: Fix Docker execution without sudo #Issue #7
+  shell: "users=$( getent passwd | awk -F: '$3 > 999 {print $1}' );for user in $users; do sudo usermod -a -G docker $user; done"
+
+- name: Install adittional dependencies
+  pip:
+    name:
+      - PyYAML
+      - docker
+      - docker-compose
+      - docker-py
+      - requests
+    state: present
+
+- name: Add Docker Plugin. Loki-docker-driver
+  shell: "docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions"
+  register: install_plugin_docker_loki
+  ignore_errors: yes
