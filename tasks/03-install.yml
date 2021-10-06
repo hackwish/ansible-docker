@@ -5,7 +5,7 @@
       - PyYAML
       - docker
       - docker-compose
-      - docker-py
+      # - docker-py
       - requests
     executable: pip3
     state: present      
