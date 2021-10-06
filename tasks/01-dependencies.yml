@@ -12,9 +12,3 @@
       - gnupg2
       - bridge-utils
     update_cache: yes
-    
-- name: Install docker libraries
-  pip:
-      name: docker
-      executable: pip3
-      state: latest
