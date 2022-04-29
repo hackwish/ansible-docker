@@ -13,7 +13,9 @@
 - name: Install Docker package
   package:
     name:
+      - docker
       - docker-ce
+      - docker-compose
       - docker-ce-cli
       - containerd.io
     state: latest
