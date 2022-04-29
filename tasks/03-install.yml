@@ -23,7 +23,7 @@
   tags: docker
   delay: 10
 
-- name: Add Docker Plugin. Loki-docker-driver
-  shell: "docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions"
-  register: install_plugin_docker_loki
-  ignore_errors: yes
+# - name: Add Docker Plugin. Loki-docker-driver
+#   shell: "docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions"
+#   register: install_plugin_docker_loki
+#   ignore_errors: yes
