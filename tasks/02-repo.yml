@@ -1,30 +1,25 @@
 ---
 - set_fact:
     ansible_distribution: Ubuntu
-    cacheable: yes
     when: 
     - ansible_distribution == "Linux Mint"
 
 - set_fact:
     ansible_distribution_release: "bionic"
-    cacheable: yes
-    when: 
-    - ansible_distribution_release == "tessa" OR 
-      ansible_distribution_release == "tricia" OR
-      ansible_distribution_release == "tina" OR
-      ansible_distribution_release == "tara" OR
-      ansible_distribution_release == "hera" OR
-      ansible_distribution_release == "juno"
+    when: (ansible_facts['ansible_distribution_release'] == "tessa") or
+          (ansible_facts['ansible_distribution_release'] == "tricia") or
+          (ansible_facts['ansible_distribution_release'] == "tina") or
+          (ansible_facts['ansible_distribution_release'] == "tara") or
+          (ansible_facts['ansible_distribution_release'] == "hera") or
+          (ansible_facts['ansible_distribution_release'] == "juno")
 
 - set_fact:
     ansible_distribution_release: "focal"
-    cacheable: yes
-    when: 
-    - ansible_distribution_release == "ulyana" OR 
-      ansible_distribution_release == "ulyssa" OR
-      ansible_distribution_release == "uma" OR
-      ansible_distribution_release == "una" OR
-      ansible_distribution_release == "odin"
+    when: (ansible_facts['ansible_distribution_release'] == "ulyana") or
+          (ansible_facts['ansible_distribution_release'] == "ulyssa") or
+          (ansible_facts['ansible_distribution_release'] == "uma") or
+          (ansible_facts['ansible_distribution_release'] == "una") or
+          (ansible_facts['ansible_distribution_release'] == "odin")
 
 - name: Import the Docker repository GPG key
   apt_key:
