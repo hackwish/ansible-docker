@@ -15,7 +15,7 @@
     name:
       # - docker-ce
       # - docker-ce-cli
-      - containerd.io
+      # - containerd.io
       - docker
       - docker-compose
       - docker.io
