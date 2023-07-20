@@ -1,24 +1,23 @@
----
 - name: Install python libraries
   pip:
     name:
-      - PyYAML
-      - docker
-      - docker-compose
-      # - docker-py
-      - requests
+    - PyYAML
+    - docker
+    # - docker-compose
+    # - docker-py
+    - requests
     executable: pip3
-    state: present      
+    state: present
 
 - name: Install Docker package
   package:
     name:
-      # - docker-ce
-      # - docker-ce-cli
-      # - containerd.io
-      - docker
-      - docker-compose
-      - docker.io
+    # - docker-ce
+    # - docker-ce-cli
+    # - containerd.io
+    - docker
+    - docker-compose
+    - docker.io
     state: latest
   register: docker_installed
   tags: docker
