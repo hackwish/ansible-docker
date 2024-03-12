@@ -23,7 +23,10 @@
 
 - set_fact:
     ansible_distribution_release: "jammy"
-    when: (ansible_facts['ansible_distribution_release'] == "vanessa")
+    when: (ansible_facts['ansible_distribution_release'] == "vanessa") or
+          (ansible_facts['ansible_distribution_release'] == "vera") or
+          (ansible_facts['ansible_distribution_release'] == "victoria") or 
+          (ansible_facts['ansible_distribution_release'] == "virginia")
 
 - name: Import the Docker repository GPG key
   apt_key:

@@ -1,5 +1,5 @@
 - name: Remove Docker old version
-  ansible.builtin.shell: for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove -y $pkg; done
+  shell: for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove -y $pkg; done
 
 - name: Install python libraries
   pip:
@@ -26,7 +26,7 @@
   delay: 10
 
 - name: Enable and run service
-  ansible.builtin.shell: systemctl enable docker && systemctl start docker
+  shell: systemctl enable docker && systemctl start docker
 
 # - name: Add Docker Plugin. Loki-docker-driver
 #   shell: "docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions"
