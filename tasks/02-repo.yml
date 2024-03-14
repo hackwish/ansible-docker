@@ -28,42 +28,50 @@
           (ansible_facts['ansible_distribution_release'] == "victoria") or 
           (ansible_facts['ansible_distribution_release'] == "virginia")
 
-- name: Import the Docker repository GPG key
-  apt_key:
-      url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
-      keyring: /etc/apt/keyrings/docker.asc
-      state: present
-      id: 0EBFCD88
-  delay: 10
-  when: 
-    - ansible_distribution == "Ubuntu"
+- name: Configure Docker repository
+  block:
+    - name: Get repository GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        # checksum: sha256:bb42f0db45d46bab5f9ec619e1a47360b94c27142e57aa71f7050d08672309e0
 
-- name: Add docker apt repo (amd64)
-  apt_repository:
-      repo: 'deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable'
-      state: present
-      update_cache: no
-  when: 
-    - ansible_distribution == "Ubuntu"
-    - ansible_architecture == "x86_64" 
+    - name: Import the Docker repository GPG key
+      apt_key:
+          url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
+          keyring: /etc/apt/keyrings/docker.asc
+          state: present
+          id: 0EBFCD88
+      delay: 10
+      when: 
+        - ansible_distribution == "Ubuntu"
 
-- name: Add docker apt repo (arm64)
-  apt_repository:
-      repo: 'deb [arch=arm64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable'
-      state: present
-      update_cache: no
-  when: 
-    - ansible_distribution == "Ubuntu"
-    - ansible_architecture == "aarch64"
+    - name: Add docker apt repo (amd64)
+      apt_repository:
+          repo: 'deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable'
+          state: present
+          update_cache: no
+      when: 
+        - ansible_distribution == "Ubuntu"
+        - ansible_architecture == "x86_64" 
 
-- name: Add docker apt repo (armhf)
-  apt_repository:
-      repo: 'deb [arch=armhf signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable'
-      state: present
-      update_cache: no
-  when: 
-    - ansible_distribution == "Ubuntu"
-    - ansible_architecture == "armv7l"
+    - name: Add docker apt repo (arm64)
+      apt_repository:
+          repo: 'deb [arch=arm64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable'
+          state: present
+          update_cache: no
+      when: 
+        - ansible_distribution == "Ubuntu"
+        - ansible_architecture == "aarch64"
+
+    - name: Add docker apt repo (armhf)
+      apt_repository:
+          repo: 'deb [arch=armhf signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable'
+          state: present
+          update_cache: no
+      when: 
+        - ansible_distribution == "Ubuntu"
+        - ansible_architecture == "armv7l"
 
 - name: apt-get update
   shell: apt-get update
