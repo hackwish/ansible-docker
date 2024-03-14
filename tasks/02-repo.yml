@@ -31,12 +31,12 @@
 - name: Import the Docker repository GPG key
   apt_key:
       url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
-      keyring: /usr/share/keyrings/docker-archive-keyring.gpg
+      keyring: /etc/apt/keyrings/docker.asc
       state: present
       id: 0EBFCD88
   delay: 10
   when: 
-    - ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
+    - ansible_distribution == "Ubuntu"
 
 - name: Add docker apt repo (amd64)
   apt_repository:
@@ -44,7 +44,7 @@
       state: present
       update_cache: no
   when: 
-    - ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
+    - ansible_distribution == "Ubuntu"
     - ansible_architecture == "x86_64" 
 
 - name: Add docker apt repo (arm64)
@@ -53,8 +53,17 @@
       state: present
       update_cache: no
   when: 
-    - ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
+    - ansible_distribution == "Ubuntu"
     - ansible_architecture == "aarch64"
+
+- name: Add docker apt repo (armhf)
+  apt_repository:
+      repo: 'deb [arch=armhf signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable'
+      state: present
+      update_cache: no
+  when: 
+    - ansible_distribution == "Ubuntu"
+    - ansible_architecture == "armv7l"
 
 - name: apt-get update
   shell: apt-get update
