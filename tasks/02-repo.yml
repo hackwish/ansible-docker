@@ -66,7 +66,7 @@
 
     - name: Add docker apt repo (armhf)
       apt_repository:
-          repo: 'deb [arch=armhf signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable'
+          repo: 'deb [arch=armhf signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} bionic stable'
           state: present
           update_cache: no
       when: 
