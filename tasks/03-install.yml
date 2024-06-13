@@ -1,5 +1,6 @@
 - name: Remove Docker old version
   shell: for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove -y $pkg; done
+  ignore_errors: yes
 
 - name: Install python libraries
   pip:
