@@ -2,16 +2,16 @@
   shell: for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove -y $pkg; done
   ignore_errors: yes
 
-- name: Install python libraries
-  pip:
-    name:
-    - PyYAML
-    - docker
-    # - docker-compose
-    # - docker-py
-    - requests
-    executable: pip3
-    state: present
+# - name: Install python libraries
+#   pip:
+#     name:
+#     - PyYAML
+#     - docker
+#     # - docker-compose
+#     # - docker-py
+#     - requests
+#     executable: pip3
+#     state: present
 
 - name: Install Docker package
   package:
