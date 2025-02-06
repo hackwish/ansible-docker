@@ -1,12 +1,12 @@
 # Docker for Linux
 ## Debian based systems
-- name: Remove Docker old version
+- name: Remove Docker old version (Debian based)
   shell: for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove -y $pkg; done
   ignore_errors: yes
   when:
     - ansible_os_family == "Debian"
 
-- name: Install Docker package
+- name: Install Docker package (Debian based)
   package:
     name:
     - docker-ce
@@ -21,14 +21,14 @@
   when:
     - ansible_os_family == "Debian"
 
-- name: Enable and run service
+- name: Enable and run service (Debian based)
   shell: systemctl enable docker && systemctl start docker
   when:
     - ansible_os_family == "Debian"
     - docker_installed.changed
 
 # Docker for MacOS
-- name: Install Docker Bundle from Brew
+- name: Install Docker Bundle from Brew (for MacOS)
   homebrew:
     name: "{{ packages }}"
   vars:
