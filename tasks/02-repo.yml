@@ -77,7 +77,11 @@
       when: 
         - ansible_distribution == "Ubuntu"
         - ansible_architecture == "armv7l"
+  when:
+    - ansible_os_family == "Debian"
 
 - name: apt-get update
   shell: apt-get update
   ignore_errors: true
+  when:
+    - ansible_os_family == "Debian"

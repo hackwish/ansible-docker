@@ -1,17 +1,10 @@
+# Docker for Linux
+## Debian based systems
 - name: Remove Docker old version
   shell: for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove -y $pkg; done
   ignore_errors: yes
-
-# - name: Install python libraries
-#   pip:
-#     name:
-#     - PyYAML
-#     - docker
-#     # - docker-compose
-#     # - docker-py
-#     - requests
-#     executable: pip3
-#     state: present
+  when:
+    - ansible_os_family == "Debian"
 
 - name: Install Docker package
   package:
@@ -25,11 +18,28 @@
   register: docker_installed
   tags: docker
   delay: 10
+  when:
+    - ansible_os_family == "Debian"
 
 - name: Enable and run service
   shell: systemctl enable docker && systemctl start docker
+  when:
+    - ansible_os_family == "Debian"
+    - docker_installed.changed
 
-# - name: Add Docker Plugin. Loki-docker-driver
-#   shell: "docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions"
-#   register: install_plugin_docker_loki
-#   ignore_errors: yes
+# Docker for MacOS
+- name: Install Docker Bundle from Brew
+  homebrew:
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - 'boot2docker'
+      - 'docker'
+      - 'docker-buildx'
+      - 'docker-clean'
+      - 'docker-completion'
+      - 'docker-compose'
+      - 'docker-machine'
+    state: present
+  when:
+    - ansible_os_family == "Darwin"

@@ -1,4 +1,4 @@
-- name: Install Docker dependencies
+- name: Install Docker dependencies on Debian based systems
   apt:
     name: "{{ packages }}"
   vars:
@@ -12,3 +12,16 @@
     - gnupg2
     - bridge-utils
     update_cache: yes
+  when:
+    - ansible_os_family == "Debian"
+
+# Install brew dependencies on MacOS 
+- name: Install Docker dependencies on MacOS
+  homebrew:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - 'go'
+    - 'go-md2man'
+  when:
+    - ansible_os_family == "Darwin"
