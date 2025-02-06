@@ -28,6 +28,11 @@
           (ansible_facts['ansible_distribution_release'] == "victoria") or 
           (ansible_facts['ansible_distribution_release'] == "virginia")
 
+- set_fact:
+    ansible_distribution_release: "noble"
+    when: (ansible_facts['ansible_distribution_release'] == "wilma") or
+          (ansible_facts['ansible_distribution_release'] == "xia")
+
 - name: Configure Docker repository
   block:
     - name: Get repository GPG key
