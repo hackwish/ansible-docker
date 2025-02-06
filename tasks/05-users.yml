@@ -2,6 +2,9 @@
 - name: Fix Docker execution without sudo #Issue #7
   shell: "users=$( getent passwd | awk -F: '$3 > 999 {print $1}' );for user in $users; do sudo usermod -a -G docker $user; done"
   register: users
+  ignore_errors: yes
+  when:
+    - ansible_os_family == "Debian"
 
 - debug:
     var: users
