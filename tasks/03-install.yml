@@ -3,6 +3,7 @@
 - name: Remove Docker old version (Debian based)
   shell: for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove -y $pkg; done
   ignore_errors: yes
+  tags: docker
   when:
     - ansible_os_family == "Debian"
 
@@ -23,9 +24,60 @@
 
 - name: Enable and run service (Debian based)
   shell: systemctl enable docker && systemctl start docker
+  tags: docker
   when:
     - ansible_os_family == "Debian"
     - docker_installed.changed
+
+### Install cri-docker (Debian based)
+# Get release
+- name: Get latest Release from | Mirantis cri-dockerd
+  shell: curl -s https://api.github.com/repos/Mirantis/cri-dockerd/releases/latest | grep tag_name | cut -d '"' -f 4 | tr -d v
+  register: result_version
+  tags: docker
+  when:
+    - ansible_os_family == "Debian"
+
+- set_fact:
+    version: "{{ result_version.stdout }}"
+
+- set_fact:
+    ansible_distribution: Ubuntu
+    tags: docker
+    when: 
+    - ansible_distribution == "Linux Mint"
+
+- set_fact:
+    ansible_distribution_release: "jammy"
+    tags: docker
+    when: (ansible_facts['ansible_distribution_release'] == "vanessa") or
+          (ansible_facts['ansible_distribution_release'] == "vera") or
+          (ansible_facts['ansible_distribution_release'] == "victoria") or 
+          (ansible_facts['ansible_distribution_release'] == "virginia")
+
+- set_fact:
+    ansible_distribution_release: "jammy"
+    tags: docker
+    when: (ansible_facts['ansible_distribution_release'] == "wilma") or
+          (ansible_facts['ansible_distribution_release'] == "xia")
+
+- name: Install cri-docker (Debian based)
+  apt:
+     deb: https://github.com/Mirantis/cri-dockerd/releases/download/v{{ version }}/cri-dockerd_{{ version }}.3-0.{{ ansible_distribution | lower }}-{{ ansible_distribution_release }}_amd64.deb
+  tags: docker
+  ignore_errors: true
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_architecture == "x86_64"
+
+- name: Install cri-docker (Debian based)
+  apt:
+     deb: https://github.com/Mirantis/cri-dockerd/releases/download/v{{ version }}/cri-dockerd_{{ version }}.3-0.{{ ansible_distribution | lower }}-{{ ansible_distribution_release }}_arm64.deb
+  tags: docker
+  ignore_errors: true
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_architecture == "arm64"
 
 # Docker for MacOS
 - name: Install Docker Bundle from Brew (for MacOS)
@@ -41,5 +93,6 @@
       - 'docker-compose'
       - 'docker-machine'
     state: present
+  tags: docker
   when:
     - ansible_os_family == "Darwin"
