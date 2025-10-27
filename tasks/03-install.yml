@@ -59,7 +59,8 @@
     ansible_distribution_release: "jammy"
     tags: docker
     when: (ansible_facts['ansible_distribution_release'] == "wilma") or
-          (ansible_facts['ansible_distribution_release'] == "xia")
+          (ansible_facts['ansible_distribution_release'] == "xia") or
+          (ansible_facts['ansible_distribution_release'] == "zara")
 
 - name: Install cri-docker (Debian based)
   apt:
