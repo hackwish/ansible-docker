@@ -2,7 +2,7 @@
 ## Debian based systems
 - name: Remove Docker old version (Debian based)
   shell: for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove -y $pkg; done
-  ignore_errors: yes
+  ignore_errors: true
   tags: docker
   when:
     - ansible_os_family == "Debian"
@@ -42,25 +42,22 @@
     version: "{{ result_version.stdout }}"
 
 - set_fact:
-    ansible_distribution: Ubuntu
-    tags: docker
-    when: 
-    - ansible_distribution == "Linux Mint"
+    ansible_distribution: "Ubuntu"
+  when: ansible_distribution == "Linux Mint"
 
 - set_fact:
-    ansible_distribution_release: "jammy"
+    ansible_distribution_release: >-
+      {{ (ansible_distribution == 'Ubuntu') | ternary(
+           {
+             'tessa': 'bionic', 'tricia': 'bionic', 'tina': 'bionic', 'tara': 'bionic',
+             'hera': 'bionic', 'juno': 'bionic',
+             'ulyana': 'focal', 'ulyssa': 'focal', 'uma': 'focal', 'una': 'focal', 'odin': 'focal',
+             'vanessa': 'jammy', 'vera': 'jammy', 'victoria': 'jammy', 'virginia': 'jammy',
+             'wilma': 'noble', 'xia': 'noble', 'zara': 'noble'
+           }.get(ansible_distribution_release | lower, ansible_distribution_release | lower),
+           ansible_distribution_release
+         ) }}
     tags: docker
-    when: (ansible_facts['ansible_distribution_release'] == "vanessa") or
-          (ansible_facts['ansible_distribution_release'] == "vera") or
-          (ansible_facts['ansible_distribution_release'] == "victoria") or 
-          (ansible_facts['ansible_distribution_release'] == "virginia")
-
-- set_fact:
-    ansible_distribution_release: "jammy"
-    tags: docker
-    when: (ansible_facts['ansible_distribution_release'] == "wilma") or
-          (ansible_facts['ansible_distribution_release'] == "xia") or
-          (ansible_facts['ansible_distribution_release'] == "zara")
 
 - name: Install cri-docker (Debian based)
   apt:
