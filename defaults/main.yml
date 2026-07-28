@@ -10,3 +10,6 @@ docker_restart_handler_state: restarted
 docker_install_compose: true
 docker_compose_version: "1.29.2"
 docker_compose_path: /usr/local/bin/docker-compose
+
+# cri-dockerd version
+cri_dockerd_version: "0.4.6"
