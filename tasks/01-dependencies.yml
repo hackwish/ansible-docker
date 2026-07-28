@@ -19,8 +19,6 @@
 - name: Install Docker dependencies on MacOS
   homebrew:
     name: "{{ packages }}"
-  register: brew_result
-  failed_when: brew_result.msg is defined and "already installed" not in brew_result.msg
   vars:
     packages:
     - 'go'
