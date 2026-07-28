@@ -5,7 +5,7 @@
   ignore_errors: true
   tags: docker
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
 
 - name: Install Docker package (Debian based)
   package:
@@ -20,13 +20,13 @@
   tags: docker
   delay: 10
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
 
 - name: Enable and run service (Debian based)
   shell: systemctl enable docker && systemctl start docker
   tags: docker
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
     - docker_installed.changed
 
 ### Install cri-docker (Debian based)
@@ -36,14 +36,17 @@
   register: result_version
   tags: docker
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
 
 - set_fact:
     version: "{{ result_version.stdout }}"
+  when: result_version.stdout is defined
 
 - set_fact:
     ansible_distribution: "Ubuntu"
-  when: ansible_distribution == "Linux Mint"
+  when:
+    - ansible_facts["os_family"] == "Debian"
+    - ansible_distribution == "Linux Mint"
 
 - set_fact:
     ansible_distribution_release: >-
@@ -57,7 +60,8 @@
            }.get(ansible_distribution_release | lower, ansible_distribution_release | lower),
            ansible_distribution_release
          ) }}
-    tags: docker
+  tags: docker
+  when: ansible_facts["os_family"] == "Debian"
 
 - name: Install cri-docker (Debian based)
   apt:
@@ -65,7 +69,7 @@
   tags: docker
   ignore_errors: true
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
     - ansible_architecture == "x86_64"
 
 - name: Install cri-docker (Debian based)
@@ -74,7 +78,7 @@
   tags: docker
   ignore_errors: true
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
     - ansible_architecture == "arm64"
 
 # Docker for MacOS
@@ -93,4 +97,4 @@
     state: present
   tags: docker
   when:
-    - ansible_os_family == "Darwin"
+    - ansible_facts["os_family"] == "Darwin"
