@@ -5,7 +5,7 @@
   ignore_errors: true
   tags: docker
   when:
-    - ansible_os_family == "Debian"
+  - ansible_facts["os_family"] == "Debian"
 
 - name: Install Docker package (Debian based)
   package:
@@ -20,14 +20,14 @@
   tags: docker
   delay: 10
   when:
-    - ansible_os_family == "Debian"
+  - ansible_facts["os_family"] == "Debian"
 
 - name: Enable and run service (Debian based)
   shell: systemctl enable docker && systemctl start docker
   tags: docker
   when:
-    - ansible_os_family == "Debian"
-    - docker_installed.changed
+  - ansible_facts["os_family"] == "Debian"
+  - docker_installed.changed
 
 ### Install cri-docker (Debian based)
 - name: Get cri-dockerd version
@@ -37,18 +37,20 @@
   changed_when: false
   tags: docker
   when:
-    - ansible_os_family == "Debian"
+  - ansible_facts["os_family"] == "Debian"
 
 - name: Set cri-dockerd version fact
   set_fact:
     version: "{{ result_version.stdout | default(cri_dockerd_version, true) }}"
   when:
-    - ansible_os_family == "Debian"
-    - result_version is defined
+  - ansible_os_family == "Debian"
+  - result_version is defined
 
 - set_fact:
     ansible_distribution: "Ubuntu"
-  when: ansible_distribution == "Linux Mint"
+  when:
+  - ansible_facts["os_family"] == "Debian"
+  - ansible_distribution == "Linux Mint"
 
 - set_fact:
     ansible_distribution_release: >-
@@ -65,24 +67,24 @@
 
 - name: Install cri-docker (Debian based)
   apt:
-     deb: https://github.com/Mirantis/cri-dockerd/releases/download/v{{ version }}/cri-dockerd_{{ version }}.3-0.{{ ansible_distribution | lower }}-{{ ansible_distribution_release }}_amd64.deb
+    deb: https://github.com/Mirantis/cri-dockerd/releases/download/v{{ version }}/cri-dockerd_{{ version }}.3-0.{{ ansible_distribution | lower }}-{{ ansible_distribution_release }}_amd64.deb
   tags: docker
   register: cri_docker_install
   when:
-    - ansible_os_family == "Debian"
-    - ansible_architecture == "x86_64"
-    - version is defined and version | length > 0
+  - ansible_facts["os_family"] == "Debian"
+  - ansible_architecture == "x86_64"
+  - version is defined and version | length > 0
   failed_when: false
 
 - name: Install cri-docker (Debian based)
   apt:
-     deb: https://github.com/Mirantis/cri-dockerd/releases/download/v{{ version }}/cri-dockerd_{{ version }}.3-0.{{ ansible_distribution | lower }}-{{ ansible_distribution_release }}_arm64.deb
+    deb: https://github.com/Mirantis/cri-dockerd/releases/download/v{{ version }}/cri-dockerd_{{ version }}.3-0.{{ ansible_distribution | lower }}-{{ ansible_distribution_release }}_arm64.deb
   tags: docker
   register: cri_docker_install
   when:
-    - ansible_os_family == "Debian"
-    - ansible_architecture == "arm64"
-    - version is defined and version | length > 0
+  - ansible_facts["os_family"] == "Debian"
+  - ansible_architecture == "arm64"
+  - version is defined and version | length > 0
   failed_when: false
 
 # Docker for MacOS
@@ -91,14 +93,14 @@
     name: "{{ packages }}"
   vars:
     packages:
-      - 'boot2docker'
-      - 'docker'
-      - 'docker-buildx'
-      - 'docker-clean'
-      - 'docker-completion'
-      - 'docker-compose'
-      - 'docker-machine'
+    - 'boot2docker'
+    - 'docker'
+    - 'docker-buildx'
+    - 'docker-clean'
+    - 'docker-completion'
+    - 'docker-compose'
+    - 'docker-machine'
     state: present
   tags: docker
   when:
-    - ansible_os_family == "Darwin"
+  - ansible_facts["os_family"] == "Darwin"

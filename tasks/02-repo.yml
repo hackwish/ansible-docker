@@ -1,19 +1,19 @@
 ---
 - set_fact:
     ansible_distribution: "Ubuntu"
-  when: ansible_distribution == "Linux Mint"
+  when: ansible_facts["distribution"] == "Linux Mint"
 
 - set_fact:
     ansible_distribution_release: >-
-      {{ (ansible_distribution == 'Ubuntu') | ternary(
+      {{ (ansible_facts["distribution"] == 'Ubuntu') | ternary(
            {
              'tessa': 'bionic', 'tricia': 'bionic', 'tina': 'bionic', 'tara': 'bionic',
              'hera': 'bionic', 'juno': 'bionic',
              'ulyana': 'focal', 'ulyssa': 'focal', 'uma': 'focal', 'una': 'focal', 'odin': 'focal',
              'vanessa': 'jammy', 'vera': 'jammy', 'victoria': 'jammy', 'virginia': 'jammy',
              'wilma': 'noble', 'xia': 'noble', 'zara': 'noble'
-           }.get(ansible_distribution_release | lower, ansible_distribution_release | lower),
-           ansible_distribution_release
+           }.get(ansible_facts["distribution_release"] | lower, ansible_facts["distribution_release"] | lower),
+           ansible_facts["distribution_release"]
          ) }}
 
 - name: Configure Docker repository
@@ -24,47 +24,52 @@
         dest: /usr/share/keyrings/docker.asc
         checksum: sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570
 
-    - name: Import the Docker repository GPG key
-      apt_key:
-          url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
-          keyring: /usr/share/keyrings/docker.asc
-          state: present
-          id: 0EBFCD88
-      delay: 10
-      when: 
-        - ansible_distribution == "Ubuntu"
-
     - name: Add docker apt repo (amd64)
-      apt_repository:
-          repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable'
-          state: present
-          update_cache: no
-      when: 
-        - ansible_distribution == "Ubuntu"
-        - ansible_architecture == "x86_64" 
+      deb822_repository:
+        name: docker
+        types: [deb]
+        architectures: [amd64]
+        suites: ["{{ ansible_facts['distribution_release'] }}"]
+        components: [stable]
+        uris: ["https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"]
+        signed_by: /usr/share/keyrings/docker.asc
+        state: present
+      when:
+        - ansible_facts["distribution"] == "Ubuntu"
+        - ansible_facts["architecture"] == "x86_64"
 
     - name: Add docker apt repo (arm64)
-      apt_repository:
-          repo: 'deb [arch=arm64 signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable'
-          state: present
-          update_cache: no
-      when: 
-        - ansible_distribution == "Ubuntu"
-        - ansible_architecture == "aarch64"
+      deb822_repository:
+        name: docker
+        types: [deb]
+        architectures: [arm64]
+        suites: ["{{ ansible_facts['distribution_release'] }}"]
+        components: [stable]
+        uris: ["https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"]
+        signed_by: /usr/share/keyrings/docker.asc
+        state: present
+      when:
+        - ansible_facts["distribution"] == "Ubuntu"
+        - ansible_facts["architecture"] == "aarch64"
 
     - name: Add docker apt repo (armhf)
-      apt_repository:
-          repo: 'deb [arch=armhf signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} bionic stable'
-          state: present
-          update_cache: no
-      when: 
-        - ansible_distribution == "Ubuntu"
-        - ansible_architecture == "armv7l"
+      deb822_repository:
+        name: docker-armhf
+        types: [deb]
+        architectures: [armhf]
+        suites: [bionic]
+        components: [stable]
+        uris: ["https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"]
+        signed_by: /usr/share/keyrings/docker.asc
+        state: present
+      when:
+        - ansible_facts["distribution"] == "Ubuntu"
+        - ansible_facts["architecture"] == "armv7l"
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
 
 - name: apt-get update
   shell: apt-get update
   ignore_errors: true
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
