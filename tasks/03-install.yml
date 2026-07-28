@@ -85,8 +85,6 @@
 - name: Install Docker Bundle from Brew (for MacOS)
   homebrew:
     name: "{{ packages }}"
-  register: brew_bundle_result
-  failed_when: brew_bundle_result.msg is defined and "already installed" not in brew_bundle_result.msg
   vars:
     packages:
       - 'boot2docker'
