@@ -13,15 +13,17 @@
     - bridge-utils
     update_cache: yes
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
 
 # Install brew dependencies on MacOS 
 - name: Install Docker dependencies on MacOS
   homebrew:
     name: "{{ packages }}"
+  register: brew_result
+  failed_when: brew_result.msg is defined and "already installed" not in brew_result.msg
   vars:
     packages:
     - 'go'
     - 'go-md2man'
   when:
-    - ansible_os_family == "Darwin"
+    - ansible_facts["os_family"] == "Darwin"
