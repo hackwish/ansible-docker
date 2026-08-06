@@ -4,17 +4,18 @@
   when: ansible_facts["distribution"] == "Linux Mint"
 
 - set_fact:
+    docker_repo_distribution: >-
+      {{ (ansible_facts["distribution"] == 'Linux Mint') | ternary('ubuntu', ansible_facts["distribution"]) | lower }}
+
+- set_fact:
     ansible_distribution_release: >-
-      {{ (ansible_facts["distribution"] == 'Ubuntu') | ternary(
-           {
-             'tessa': 'bionic', 'tricia': 'bionic', 'tina': 'bionic', 'tara': 'bionic',
-             'hera': 'bionic', 'juno': 'bionic',
-             'ulyana': 'focal', 'ulyssa': 'focal', 'uma': 'focal', 'una': 'focal', 'odin': 'focal',
-             'vanessa': 'jammy', 'vera': 'jammy', 'victoria': 'jammy', 'virginia': 'jammy',
-             'wilma': 'noble', 'xia': 'noble', 'zara': 'noble', 'zena': 'noble'
-           }.get(ansible_facts["distribution_release"] | lower, ansible_facts["distribution_release"] | lower),
-           ansible_facts["distribution_release"]
-         ) }}
+      {{ {
+           'tessa': 'bionic', 'tricia': 'bionic', 'tina': 'bionic', 'tara': 'bionic',
+           'hera': 'bionic', 'juno': 'bionic',
+           'ulyana': 'focal', 'ulyssa': 'focal', 'uma': 'focal', 'una': 'focal', 'odin': 'focal',
+           'vanessa': 'jammy', 'vera': 'jammy', 'victoria': 'jammy', 'virginia': 'jammy',
+           'wilma': 'noble', 'xia': 'noble', 'zara': 'noble', 'zena': 'noble'
+         }.get(ansible_facts["distribution_release"] | lower, ansible_facts["distribution_release"] | lower) }}
 
 - name: Configure Docker repository
   block:
@@ -23,6 +24,19 @@
         path: /etc/apt/keyrings
         state: directory
         mode: '0755'
+
+    - name: Find stale Docker apt source files
+      ansible.builtin.find:
+        paths: /etc/apt/sources.list.d
+        patterns: 'docker*'
+        file_type: file
+      register: docker_source_files
+
+    - name: Remove stale Docker apt source files
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ docker_source_files.files }}"
 
     - name: Download Docker GPG key
       ansible.builtin.get_url:
@@ -48,11 +62,11 @@
         architectures: [amd64]
         suites: ["{{ ansible_distribution_release }}"]
         components: [stable]
-        uris: ["https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"]
+        uris: ["https://download.docker.com/linux/{{ docker_repo_distribution }}"]
         signed_by: /etc/apt/keyrings/docker.gpg
         state: present
       when:
-        - ansible_facts["distribution"] == "Ubuntu"
+        - docker_repo_distribution == "ubuntu"
         - ansible_facts["architecture"] == "x86_64"
 
     - name: Add docker apt repo (arm64)
@@ -62,11 +76,11 @@
         architectures: [arm64]
         suites: ["{{ ansible_distribution_release }}"]
         components: [stable]
-        uris: ["https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"]
+        uris: ["https://download.docker.com/linux/{{ docker_repo_distribution }}"]
         signed_by: /etc/apt/keyrings/docker.gpg
         state: present
       when:
-        - ansible_facts["distribution"] == "Ubuntu"
+        - docker_repo_distribution == "ubuntu"
         - ansible_facts["architecture"] == "aarch64"
 
     - name: Add docker apt repo (armhf)
@@ -76,11 +90,11 @@
         architectures: [armhf]
         suites: ["{{ ansible_distribution_release }}"]
         components: [stable]
-        uris: ["https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"]
+        uris: ["https://download.docker.com/linux/{{ docker_repo_distribution }}"]
         signed_by: /etc/apt/keyrings/docker.gpg
         state: present
       when:
-        - ansible_facts["distribution"] == "Ubuntu"
+        - docker_repo_distribution == "ubuntu"
         - ansible_facts["architecture"] == "armv7l"
   when:
     - ansible_facts["os_family"] == "Debian"
