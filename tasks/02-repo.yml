@@ -11,28 +11,45 @@
              'hera': 'bionic', 'juno': 'bionic',
              'ulyana': 'focal', 'ulyssa': 'focal', 'uma': 'focal', 'una': 'focal', 'odin': 'focal',
              'vanessa': 'jammy', 'vera': 'jammy', 'victoria': 'jammy', 'virginia': 'jammy',
-             'wilma': 'noble', 'xia': 'noble', 'zara': 'noble'
+             'wilma': 'noble', 'xia': 'noble', 'zara': 'noble', 'zena': 'noble'
            }.get(ansible_facts["distribution_release"] | lower, ansible_facts["distribution_release"] | lower),
            ansible_facts["distribution_release"]
          ) }}
 
 - name: Configure Docker repository
   block:
-    - name: Get repository GPG key
+    - name: Ensure Docker apt keyrings directory exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download Docker GPG key
       ansible.builtin.get_url:
         url: https://download.docker.com/linux/ubuntu/gpg
-        dest: /usr/share/keyrings/docker.asc
-        checksum: sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570
+        dest: /tmp/docker.gpg
+        mode: '0644'
+
+    - name: Dearmor Docker GPG key
+      ansible.builtin.command:
+        cmd: gpg --dearmor --yes --output /etc/apt/keyrings/docker.gpg /tmp/docker.gpg
+      args:
+        creates: /etc/apt/keyrings/docker.gpg
+
+    - name: Set permissions on Docker GPG key
+      ansible.builtin.file:
+        path: /etc/apt/keyrings/docker.gpg
+        mode: '0644'
 
     - name: Add docker apt repo (amd64)
       deb822_repository:
         name: docker
         types: [deb]
         architectures: [amd64]
-        suites: ["{{ ansible_facts['distribution_release'] }}"]
+        suites: ["{{ ansible_distribution_release }}"]
         components: [stable]
         uris: ["https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"]
-        signed_by: /usr/share/keyrings/docker.asc
+        signed_by: /etc/apt/keyrings/docker.gpg
         state: present
       when:
         - ansible_facts["distribution"] == "Ubuntu"
@@ -43,10 +60,10 @@
         name: docker
         types: [deb]
         architectures: [arm64]
-        suites: ["{{ ansible_facts['distribution_release'] }}"]
+        suites: ["{{ ansible_distribution_release }}"]
         components: [stable]
         uris: ["https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"]
-        signed_by: /usr/share/keyrings/docker.asc
+        signed_by: /etc/apt/keyrings/docker.gpg
         state: present
       when:
         - ansible_facts["distribution"] == "Ubuntu"
@@ -57,10 +74,10 @@
         name: docker-armhf
         types: [deb]
         architectures: [armhf]
-        suites: [bionic]
+        suites: ["{{ ansible_distribution_release }}"]
         components: [stable]
         uris: ["https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"]
-        signed_by: /usr/share/keyrings/docker.asc
+        signed_by: /etc/apt/keyrings/docker.gpg
         state: present
       when:
         - ansible_facts["distribution"] == "Ubuntu"

@@ -3,14 +3,10 @@
     name: "{{ packages }}"
   vars:
     packages:
-    - apt-transport-https
     - ca-certificates
     - curl
     - gnupg
-    - gnupg-agent
-    - software-properties-common
-    - gnupg2
-    - bridge-utils
+    - lsb-release
     update_cache: yes
   when:
     - ansible_facts["os_family"] == "Debian"
