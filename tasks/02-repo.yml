@@ -38,6 +38,22 @@
         state: absent
       loop: "{{ docker_source_files.files }}"
 
+    - name: Remove any Docker repo files referencing docker.com
+      ansible.builtin.shell: |
+        grep -l 'download.docker.com' /etc/apt/sources.list.d/* 2>/dev/null | xargs -r rm -f
+      changed_when: false
+      when: ansible_facts["os_family"] == "Debian"
+
+    - name: Remove old Docker keyrings (conflicting)
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /usr/share/keyrings/docker.asc
+        - /usr/share/keyrings/docker.gpg
+        - /etc/apt/trusted.gpg.d/docker.gpg
+      when: ansible_facts["os_family"] == "Debian"
+
     - name: Download Docker GPG key
       ansible.builtin.get_url:
         url: https://download.docker.com/linux/ubuntu/gpg
